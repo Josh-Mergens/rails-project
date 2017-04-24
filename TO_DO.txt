@@ -1,0 +1,17 @@
+1. Do this thing :
+
+    Further Notes about Paperclip
+
+    Yes, a model (in our case an article) could have many attachments instead of just one. To accomplish this you’d create a new model, let’s call it "Attachment", where each instance of the model can have one file using the same fields we put into Article above as well as an article_id field. The Attachment would then belong_to an article, and an article would have_many attachments.
+
+    Paperclip supports automatic image resizing and it’s easy. In your model, you’d add an option like this:
+
+    1
+    has_attached_file :image, styles: { medium: "300x300>", thumb: "100x100>" }
+    This would automatically create a "medium" size where the largest dimension is 300 pixels and a "thumb" size where the largest dimension is 100 pixels. Then in your view, to display a specific version, you just pass in an extra parameter like this:
+
+    1
+    <%= image_tag @article.image.url(:medium) %>
+    If it’s so easy, why don’t we do it right now? The catch is that paperclip doesn’t do the image manipulation itself, it relies on a package called imagemagick. Image processing libraries like this are notoriously difficult to install. If you’re on Linux, it might be as simple as sudo apt-get install imagemagick. On OS X, if you have Homebrew installed, it’d be brew install imagemagick. On windows you need to download and copy some EXEs and DLLs. It can be a hassle, which is why we won’t do it during this class.
+
+    If you do manage to get imagemagick installed, be advised that the custom sizes will only take affect on those images uploaded after the imagemagick installation. In otherwords, when the image is uploaded - Paperclip will use Imagemagick to create the customized sizes specified on the has_attached_file line. This also means that if you change your sizes as a later time, any images that had been previously uploaded won’t have versions at those new sizes.
